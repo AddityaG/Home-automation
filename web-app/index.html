@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LED IoT Example</title>
+
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="/assets/style.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <p class="title">RGB LED IoT Appliation</p>
+    <div class="buttons-container">
+      <div class="buttons-container__button buttons-container__button--red" id="button-red">Red</div>
+      <!-- <div class="buttons-container__button buttons-container__button--green" id="button-green">Green</div>
+      <div class="buttons-container__button buttons-container__button--blue" id="button-blue">Blue</div>
+	-->   
+ </div>
+
+    <!-- scripts -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <!--<script src="./main.js"> </script>-->
+ <script>var button_red = document.getElementById( 'button-red' );
+
+// initial button states
+var button_red_state = false;
+
+// check for active connection
+var isConnectionActive = false;
+
+// connect to the Web Socket server
+var connection = io();
+
+// when connection is established 
+connection.on( 'connect', () => {
+  isConnectionActive = true;
+} );
+
+connection.on( 'disconnect', () => {
+  isConnectionActive = false;
+} );
+
+// WebSocket event emitter function
+var emitEvent = function( event ) {
+  if( ! isConnectionActive ) {
+    return alert( 'Server connection is closed!' );
+  }
+
+  // change button state
+  if( event.target.id === 'button-red') { button_red_state = ! button_red_state; }
+
+  // emit `led-toggle` socket event
+  connection.emit( 'led-toggle', {
+    r: button_red_state,
+  } );
+};
+
+// add event listeners on button
+button_red.addEventListener( 'click', emitEvent ); </script>
+    <!--  <script> var socket = io(); 		
+ </script> --> 
+  </body>
+</html>
